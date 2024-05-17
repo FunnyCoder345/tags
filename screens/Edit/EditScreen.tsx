@@ -21,6 +21,7 @@ import {captureRef} from 'react-native-view-shot';
 import RNFS from 'react-native-fs';
 import {CameraRoll} from '@react-native-camera-roll/camera-roll';
 import getPermissions from '../../services/getPermissions';
+import Share from 'react-native-share';
 
 export default function EditScreen({navigation}: {navigation: any}) {
   const {
@@ -46,13 +47,11 @@ export default function EditScreen({navigation}: {navigation: any}) {
     }
     if (download) return Alert.alert('Photo already uploaded');
 
-    console.log('started capture');
     try {
       const uri = await captureRef(viewShotRef, {
         format: 'png',
         quality: 0.8,
       });
-      console.log('Image captured:', uri);
 
       const fileName = `screenshot_${new Date().toISOString()}.png`;
       const destPath = `${RNFS.DocumentDirectoryPath}/${fileName}`;
@@ -128,7 +127,12 @@ export default function EditScreen({navigation}: {navigation: any}) {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.button}
-              onPress={() => shareAsync(photo.uri)}>
+              onPress={() =>
+                Share.open({
+                  title: 'Share Photo',
+                  url: photo.uri,
+                })
+              }>
               <Text style={styles.menuItem}>Share</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.button} onPress={handleDownload}>

@@ -12,7 +12,9 @@ import {useStore} from '../../store/store';
 import Icon from 'react-native-vector-icons/FontAwesome6';
 import Icon2 from 'react-native-vector-icons/FontAwesome';
 import Icon3 from 'react-native-vector-icons/Feather';
-import * as FileSystem from 'expo-file-system';
+import RNFS from 'react-native-fs';
+import {CameraRoll} from '@react-native-camera-roll/camera-roll';
+import Share from 'react-native-share';
 
 export default function Image({navigation}: {navigation: any}) {
   const [like, setLike] = useState(false); //likes state
@@ -22,24 +24,28 @@ export default function Image({navigation}: {navigation: any}) {
   const savePhoto = async () => {
     //save photo at device
     if (!activeImage) return;
-    const directory = FileSystem.cacheDirectory || 'images';
-    const fileUri = directory + new Date();
-    console.log('starting downloading');
-    const downloadReusable = FileSystem.createDownloadResumable(
-      activeImage.url,
-      fileUri,
-      {},
-    );
-    const res = await downloadReusable.downloadAsync();
-    Alert.alert('Image saved');
+    console.log(activeImage);
 
-    console.log('Download complete,', res?.uri);
+    const savePath = `${RNFS.DocumentDirectoryPath}/${Date.now()}.jpg`;
+    console.log(savePath, 'path ');
+    await RNFS.downloadFile({
+      fromUrl: activeImage.url,
+      toFile: savePath,
+    })
+      .promise.then(async () => {
+        Alert.alert('Success!', 'Image downloaded');
+        await CameraRoll.save(savePath);
+      })
+      .catch(error => {
+        Alert.alert('Error!!!', error?.message);
+      });
   };
+
   const removePhoto = () => {
-    // deleteImage(activeImage.id)
-    // setActiveImage(null)
-    // setActiveTags([])
-    // navigation.navigate('Home')
+    deleteImage(activeImage.id);
+    setActiveImage(null);
+    setActiveTags([]);
+    navigation.navigate('Home');
   };
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -56,7 +62,7 @@ export default function Image({navigation}: {navigation: any}) {
       </View>
       <View style={styles.imageContainer}>
         <ImageBackground
-          resizeMode="contain"
+          resizeMode="cover"
           style={styles.image}
           source={{uri: activeImage?.url}}
         />
@@ -73,7 +79,13 @@ export default function Image({navigation}: {navigation: any}) {
           <TouchableOpacity onPress={savePhoto}>
             <Icon3 name="download" size={24} style={styles.backIcon} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => shareAsync(activeImage.url)}>
+          <TouchableOpacity
+            onPress={() =>
+              Share.open({
+                title: 'Share Photo',
+                url: activeImage.url,
+              })
+            }>
             <Icon3 name="share-2" size={24} style={styles.backIcon} />
           </TouchableOpacity>
         </View>
@@ -98,6 +110,7 @@ const styles = StyleSheet.create({
     gap: 20,
     alignItems: 'center',
     justifyContent: 'space-around',
+    paddingVertical: 8,
     paddingHorizontal: 12,
   },
   buttons: {
