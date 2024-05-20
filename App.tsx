@@ -7,7 +7,13 @@ import HomeScreen from './screens/Home/HomeScreen';
 import CameraScreen from './screens/Camera/Camera';
 import EditScreen from './screens/Edit/EditScreen';
 import Image from './screens/Image/Image';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {GOOGLE_WEB_CLIENTID, GOOGLE_IOS_CLIENTID} from '@env';
 
+GoogleSignin.configure({
+  webClientId: GOOGLE_WEB_CLIENTID,
+  iosClientId: GOOGLE_IOS_CLIENTID,
+});
 const Stack = createNativeStackNavigator();
 
 function App(): React.JSX.Element {

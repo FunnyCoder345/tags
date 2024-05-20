@@ -8,4 +8,6 @@ declare module '@env' {
   export const FIREBASE_APP_ID: string;
   export const IOS_ID: string;
   export const ANDROID_ID: string;
+  export const GOOGLE_WEB_CLIENTID: string;
+  export const GOOGLE_IOS_CLIENTID: string;
 }

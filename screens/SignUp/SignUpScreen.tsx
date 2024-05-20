@@ -16,13 +16,6 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import IconEmpty from 'react-native-vector-icons/AntDesign';
 import {useForm, Controller, SubmitHandler} from 'react-hook-form';
 import {useAuth} from '../../store/auth';
-import {
-  GoogleAuthProvider,
-  onAuthStateChanged,
-  signInWithCredential,
-} from 'firebase/auth';
-import {auth} from '../../firebase';
-import {IOS_ID, ANDROID_ID} from '@env';
 import {useIsFocused} from '@react-navigation/native';
 interface IFormInput {
   email: string;
@@ -32,7 +25,7 @@ interface IFormInput {
 
 export default function SignUpScreen({navigation}: {navigation: any}) {
   const isFocused = useIsFocused();
-  const {user, error, loading, setLoading, setError, createUser, signUp} =
+  const {user, error, loading, setError, googleAuth, setLoading, signUp} =
     useAuth();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false); //state of showing password
   const [isPasswordVisible2, setIsPasswordVisible2] = useState(false); //state of showing password
@@ -53,38 +46,10 @@ export default function SignUpScreen({navigation}: {navigation: any}) {
   const email = watch('email');
   const password = watch('password');
 
-  const [_, response, promptAsync] = Google.useAuthRequest({
-    //google hook for google auth
-    iosClientId: IOS_ID,
-    androidClientId: ANDROID_ID,
-  });
   useEffect(() => {
     if (!isFocused) return;
-    if (response?.type === 'success') {
-      const res = GoogleAuthProvider.credential(response.params.id_token);
-      signInWithCredential(auth, res); //chain of functions to connect google modal, get token, then get data and logn user in firebase
-    }
-  }, [response, isFocused]);
-
-  useEffect(() => {
-    if (!isFocused) return;
-    if (user) return;
-    console.log('registration useEffect');
-    onAuthStateChanged(auth, userData => {
-      //after user authenticated by google create user at the firebase
-      try {
-        if (!userData) throw new Error('no user ');
-        const data = {
-          id: userData.uid,
-          name: userData.displayName,
-          email: userData.email,
-        };
-        createUser(data);
-      } catch (error) {
-        console.log(error, 'google auth error');
-      }
-    });
-  }, [isFocused]);
+    setError('');
+  }, [email, password]);
 
   useEffect(() => {
     if (!isFocused) return;
@@ -92,17 +57,8 @@ export default function SignUpScreen({navigation}: {navigation: any}) {
     if (error) setLoading(false);
   }, [user, error, isFocused]);
 
-  useEffect(() => {
-    if (!isFocused) return;
-    setError('');
-  }, [email, password, isFocused]);
-
   const Registation: SubmitHandler<IFormInput> = async data => {
     signUp(data.email, data.password, data.name);
-  };
-  const googleAuth = async () => await promptAsync();
-  const appleAuth = async () => {
-    await promptAsync();
   };
 
   return (
@@ -252,16 +208,6 @@ export default function SignUpScreen({navigation}: {navigation: any}) {
               <Text style={styles.error}>{errors.confirmPassword.message}</Text>
             )}
           </View>
-          {/* {!loading 
-            ?<Button onPress={handleSubmit(Registation)} color='rgb(220 38 38)' title='SignUp'/>
-            :<View style={styles.loader}><ActivityIndicator /></View>
-          }
-          {!loading 
-            ?<TouchableOpacity style={styles.googleButton} onPress={googleAuth}>
-              <Image style={styles.googleIcon} source={require('../../assets/images/googleIcon.png')} />
-            </TouchableOpacity>
-            :<View style={styles.googleLoader}><ActivityIndicator /></View>
-          } */}
           <TouchableOpacity
             style={styles.login}
             onPress={handleSubmit(Registation)}>
@@ -284,7 +230,7 @@ export default function SignUpScreen({navigation}: {navigation: any}) {
               )}
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.appleButton} onPress={appleAuth}>
+            <TouchableOpacity style={styles.appleButton}>
               {!loading ? (
                 <Image
                   style={styles.appleIcon}

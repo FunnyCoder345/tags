@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "1099000983894",
+    "project_id": "tags-6fa2f",
+    "storage_bucket": "tags-6fa2f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1099000983894:android:38df30c9e16a2ba36fa6f7",
+        "android_client_info": {
+          "package_name": "com.test.itag"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1099000983894-7fvl4kfh6ivc5vosaujo9n44vpdeqgu6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.test.itag",
+            "certificate_hash": "10cc2f23e360aca6a449c072ae7ac7eda63bc2a0"
+          }
+        },
+        {
+          "client_id": "1099000983894-0663u1erbjv4pbl4cr7pvdj8mfv3k8av.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0a2ku3nX5rO0KIbXmXRxL_JugpQwBwOc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1099000983894-0663u1erbjv4pbl4cr7pvdj8mfv3k8av.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1099000983894-8jjp49koi1sssgkl4vq3ortv5a7bheqp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.StickerSmash"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

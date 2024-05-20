@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {GoogleAuthProvider} from '@react-native-firebase/auth';
+
 import {
   StyleSheet,
   Text,
@@ -18,7 +18,6 @@ import {useAuth} from '../../store/auth';
 import IconEmpty from 'react-native-vector-icons/AntDesign';
 
 import {useIsFocused} from '@react-navigation/native';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
 interface IFormInput {
   email: string;
@@ -27,7 +26,8 @@ interface IFormInput {
 export default function LoginScreen({navigation}: {navigation: any}) {
   const isFocused = useIsFocused();
 
-  const {error, user, loading, setError, signIn, setLoading} = useAuth(); //auth store
+  const {error, user, loading, setError, googleAuth, signIn, setLoading} =
+    useAuth(); //auth store
   const [isPasswordVisible, setIsPasswordVisible] = useState(false); //state of showing password
 
   const {
@@ -56,12 +56,6 @@ export default function LoginScreen({navigation}: {navigation: any}) {
     if (!isFocused) return;
     setError('');
   }, [email, password]);
-
-  const googleAuth = async () => {
-  //   await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
-  //   const {idToken} = await GoogleSignin.signIn();
-  //   const googleCredential = GoogleAuthProvider.credential(idToken);
-  };
 
   const login: SubmitHandler<IFormInput> = data =>
     signIn(data.email, data.password);
