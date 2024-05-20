@@ -96,63 +96,64 @@ export default function EditScreen({navigation}: {navigation: any}) {
 
       {
         // !waitLabels &&
-        // !loading &&
-        <KeyboardAvoidingView
-          style={{flex: 1}}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
-          <View style={styles.section}>
-            {/* section of capturing image */}
-            <ViewShot
-              ref={viewShotRef}
-              style={styles.imageContainer}
-              options={{format: 'jpg', quality: 0.9}}>
-              <View style={styles.tagsContainer}>
-                {/* Choocen labels displayed on photo, liek a list of items*/}
-                <ActiveLabelsList
-                  activeLabels={activeLabels}
-                  setActiveLabels={setActiveLabels}
-                />
-              </View>
-              {photo && (
-                <Image style={styles.image} source={{uri: photo?.uri}} />
-              )}
-            </ViewShot>
-            {/* Lables list */}
-            <LabelsList />
-          </View>
-          <View style={styles.buttons}>
-            <TouchableOpacity style={styles.button} onPress={uploadFile}>
-              <Text style={styles.menuItem}>Upload photo</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() =>
-                Share.open({
-                  title: 'Share Photo',
-                  url: photo.uri,
-                })
-              }>
-              <Text style={styles.menuItem}>Share</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={handleDownload}>
-              <Text style={styles.menuItem}>Download photo</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={handleSave}>
-              <Text style={styles.menuItem}>Save</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => handleRetake('camera')}>
-              <Text style={styles.menuItem}>Retake</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{padding: 8}}
-              onPress={() => handleRetake('home')}>
-              <Text style={[styles.menuItem, {color: 'red'}]}>Remove</Text>
-            </TouchableOpacity>
-          </View>
-        </KeyboardAvoidingView>
+        !loading && (
+          <KeyboardAvoidingView
+            style={{flex: 1}}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
+            <View style={styles.section}>
+              {/* section of capturing image */}
+              <ViewShot
+                ref={viewShotRef}
+                style={styles.imageContainer}
+                options={{format: 'jpg', quality: 0.9}}>
+                <View style={styles.tagsContainer}>
+                  {/* Choocen labels displayed on photo, liek a list of items*/}
+                  <ActiveLabelsList
+                    activeLabels={activeLabels}
+                    setActiveLabels={setActiveLabels}
+                  />
+                </View>
+                {photo && (
+                  <Image style={styles.image} source={{uri: photo?.uri}} />
+                )}
+              </ViewShot>
+              {/* Lables list */}
+              <LabelsList />
+            </View>
+            <View style={styles.buttons}>
+              <TouchableOpacity style={styles.button} onPress={uploadFile}>
+                <Text style={styles.menuItem}>Upload photo</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() =>
+                  Share.open({
+                    title: 'Share Photo',
+                    url: photo.uri,
+                  })
+                }>
+                <Text style={styles.menuItem}>Share</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.button} onPress={handleDownload}>
+                <Text style={styles.menuItem}>Download photo</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.button} onPress={handleSave}>
+                <Text style={styles.menuItem}>Save</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => handleRetake('camera')}>
+                <Text style={styles.menuItem}>Retake</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{padding: 8}}
+                onPress={() => handleRetake('home')}>
+                <Text style={[styles.menuItem, {color: 'red'}]}>Remove</Text>
+              </TouchableOpacity>
+            </View>
+          </KeyboardAvoidingView>
+        )
       }
     </SafeAreaView>
   );

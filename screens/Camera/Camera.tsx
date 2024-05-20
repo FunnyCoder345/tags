@@ -1,35 +1,120 @@
-import React, {useEffect} from 'react';
-import {Alert, StyleSheet, View} from 'react-native';
-import {Text, TouchableOpacity} from 'react-native';
+import {useIsFocused} from '@react-navigation/native';
+import React, {useEffect, useRef, useState} from 'react';
+import {
+  Alert,
+  Dimensions,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+const {width} = Dimensions.get('window');
 import {
   Camera,
   useCameraPermission,
   useMicrophonePermission,
   useCameraDevice,
 } from 'react-native-vision-camera';
-const CameraScreen = () => {
+import Icon from 'react-native-vector-icons/FontAwesome6';
+import {useStore} from '../../store/store';
+
+const CameraScreen = ({navigation}: {navigation: any}) => {
+  const isFocused = useIsFocused();
+
+  const {setPhoto} = useStore();
+  const [isFront, setIsFront] = useState(false);
+
+  const device = useCameraDevice(isFront ? 'front' : 'back');
+  const camera = useRef<Camera>(null);
+
   const {hasPermission, requestPermission} = useCameraPermission(); //Camera permission hook
   const {
     hasPermission: hasMicroPermission,
     requestPermission: requestMicroPermission,
   } = useMicrophonePermission(); //Microphone permission hook
-  const device = useCameraDevice('back');
+
   useEffect(() => {
     if (!hasPermission) requestPermission(); //request camera permission
     if (!hasMicroPermission) requestMicroPermission(); //request microphone permission
   }, [hasPermission, hasMicroPermission]);
 
-  if (!device) return Alert.alert('Error!', 'Camera not found!');
+  if (!device) {
+    return (
+      <View>
+        <Text>No camera device!</Text>
+      </View>
+    );
+  }
+
+  const takePick = async () => {
+    const photo = await camera.current?.takePhoto();
+    if (!photo)
+      return Alert.alert('Error', 'Something going wrong, retake photo');
+
+    setPhoto({...photo, uri: photo.path});
+    navigation.navigate('Edit');
+  };
 
   return (
-    <Camera style={styles.camera} device={device} isActive={true}></Camera>
+    <View style={{flex: 1}}>
+      <Camera
+        ref={camera}
+        style={StyleSheet.absoluteFill}
+        device={device}
+        isActive={isFocused}
+        photo={true}
+      />
+      <Icon
+        onPress={() => navigation.navigate('Home')}
+        style={styles.back}
+        name="angle-left"
+        size={24}
+        color="white"
+      />
+      <Icon
+        onPress={() => setIsFront(!isFront)}
+        name="camera-rotate"
+        size={24}
+        color="white"
+        style={styles.swipe}
+      />
+      <TouchableOpacity style={styles.button} onPress={takePick}>
+        <View style={styles.buttonInner} />
+      </TouchableOpacity>
+    </View>
   );
 };
 
 export default CameraScreen;
 
 const styles = StyleSheet.create({
-  camera: {
-    flex: 1,
+  button: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    bottom: 100,
+    width: 80,
+    height: 80,
+    left: width / 2 - 40, // Center horizontally
+    borderRadius: 60,
+    backgroundColor: 'white',
+  },
+  swipe: {
+    position: 'absolute',
+    top: 70,
+    right: 30,
+  },
+  back: {
+    position: 'absolute',
+    top: 70,
+    left: 30,
+  },
+  buttonInner: {
+    backgroundColor: 'white',
+    borderColor: '#001ca6',
+    width: 70,
+    height: 70,
+    borderRadius: 60,
+    borderWidth: 2,
   },
 });
